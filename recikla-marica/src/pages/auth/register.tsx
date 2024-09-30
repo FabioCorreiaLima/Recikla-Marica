@@ -37,7 +37,7 @@ const RegisterPage: React.FC = () => {
             }
 
             console.log('Cadastro bem-sucedido');
-            router.push('auth/login'); // Redireciona para a página de login
+            router.push('/auth/login'); // Redireciona para a página de login
         } catch (error: any) {
             console.error('Erro ao se cadastrar:', error);
             setError(error.message || 'Erro ao cadastrar. Tente novamente.');

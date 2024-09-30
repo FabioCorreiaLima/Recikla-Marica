@@ -28,6 +28,16 @@ const DashboardPage = () => {
             Localizar Rotas de Reciclagem
           </a>
         </div>
+        <div className="col">
+          <a href="/posts/posts" className="btn btn-info w-100 mb-3">
+            Postagens
+          </a>
+        </div>
+        <div className="col">
+          <a href="/posts/create-post" className="btn btn-info w-100 mb-3">
+            Criar Novo Post
+          </a>
+        </div>
       </div>
     </div>
   );

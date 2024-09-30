@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 async function sendResetPasswordEmail(email, resetToken) {
   // Defina o e-mail a ser enviado
   const mailOptions = {
-    from: 'fabiocorreia455@gmail.com', // E-mail do remetente
+    from: '', // E-mail do remetente
     to: email,                         // E-mail do destinatário (o e-mail fornecido pelo usuário)
     subject: 'Redefinição de Senha',
     text: `Clique no link abaixo para redefinir sua senha:\n\nhttp://localhost:3001/auth/reset-password?token=${resetToken}`

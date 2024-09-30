@@ -56,3 +56,13 @@ export const requestCollection = async (data: { material: string, quantity: stri
 export const getCollections = async () => {
     return await api.get('/api/collections');
 };
+
+// Função para criar posts
+export const requestPost = async (data: { titulo: string, conteudo: string }) => {
+    return await api.post('/api/posts', data);
+};
+
+// Função para listagem de posts
+export const getPosts = async () => {
+    return await api.get('/api/posts');
+};

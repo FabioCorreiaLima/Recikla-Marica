@@ -4,17 +4,15 @@ const userRepository = require('../repositories/userRepository');
 const { sendResetPasswordEmail } = require('../utils/email');
 
 class AuthService {
-  async register({ username, email, password, role}) {
+  async register({ username, email, password }) {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await userRepository.createUser({ username, email, password: hashedPassword, role });
+    const user = await userRepository.createUser({ username, email, password: hashedPassword  });
     return user;
   }
 
   async login({ email, password }) {
     const user = await userRepository.findUserByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new Error('Invalid credentials');
-    }
+    
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return { user, token };
   }
@@ -34,7 +32,7 @@ class AuthService {
     const user = await userRepository.findUserById(decoded.id);
 
     if (!user) {
-      throw new Error('Invalid or expired token');
+      throw new Error('Token inválido ou expirado');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

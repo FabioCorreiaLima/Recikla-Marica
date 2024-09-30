@@ -18,7 +18,6 @@ exports.login = async (req, res) => {
   }
 };
 
-
 exports.forgotPassword = async (req, res) => {
   try {
     await authService.forgotPassword(req.body.email);
@@ -27,15 +26,14 @@ exports.forgotPassword = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 exports.resetPassword = async (req, res) => {
   try {
     const token = req.query.token; // Token vindo da query string
     const newPassword = req.body.password; // Nome correto da chave para a nova senha
-
     // Chama o serviço de redefinição de senha
     await authService.resetPassword(token, newPassword);
-
-    res.status(200).json({ message: 'Password updated successfully' });
+    res.status(200).json({ message: 'Senha atualizada com sucesso!' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
