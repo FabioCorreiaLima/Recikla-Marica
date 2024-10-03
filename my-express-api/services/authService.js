@@ -16,6 +16,8 @@ class AuthService {
       throw new Error('Invalid credentials');
     }
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    console.log(token)
+    
     return { user, token };
   }
 
@@ -40,6 +42,40 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await userRepository.updateUser(user.id, { password: hashedPassword, resetToken: null, resetTokenExpiry: null });
   }
+
+  async getUserProfile(userId) {
+    const user = await userRepository.findUserById(userId);
+    if (!user) {
+      throw new Error('Usuário não encontrado');
+    }
+
+    return {
+      username: user.username,
+      email: user.email
+    };
+  }
+
+  async updateUserProfile(userId, updateData) {
+    const user = await userRepository.findUserById(userId);
+    if (!user) {
+      throw new Error('Usuário não encontrado');
+    }
+  
+    // Atualiza os dados recebidos, se fornecidos
+    user.username = updateData.username || user.username;
+    user.email = updateData.email || user.email;
+  
+    if (updateData.password) {
+      const hashedPassword = await bcrypt.hash(updateData.password, 10);
+      user.password = hashedPassword;
+    }
+  
+    await userRepository.updateUser(user.id, user); // Atualiza o usuário no banco de dados
+  
+    return user; // Retorna o usuário atualizado
+  }
+  
 }
+
 
 module.exports = new AuthService();

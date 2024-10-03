@@ -29,20 +29,26 @@ export const resetPassword = async (token: string, password: string) => {
     return await api.post('/api/auth/reset-password', { token, password });
 };
 
-
-
-
-
 // Função para obter perfil
 export const getProfile = async () => {
-    return await api.get('/api/profile');
+    const token = localStorage.getItem('token');
+    return await api.get('/auth/profile', {
+        headers: {
+        Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 // Função para atualizar perfil
 export const updateProfile = async (data: FormData) => {
-    return await api.put('/api/profile', data, {
+    const token = localStorage.getItem('token');
+    // Verifique os valores do FormData
+    for (let [key, value] of data.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+    return await api.put('/auth/profile', data, {
         headers: {
-            'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`,
         },
     });
 };

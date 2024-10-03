@@ -40,3 +40,24 @@ exports.resetPassword = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+exports.getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // ID do usuário autenticado
+    const profile = await authService.getUserProfile(userId);
+    res.json(profile);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // ID do usuário autenticado
+    const updatedUser = await authService.updateUserProfile(userId, req.body); // Chama o serviço para atualizar o perfil
+    res.status(200).json(updatedUser); // Retorna o usuário atualizado
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+

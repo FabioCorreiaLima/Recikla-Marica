@@ -17,7 +17,7 @@ async function sendResetPasswordEmail(email, resetToken) {
     from: 'fabiocorreia455@gmail.com', // E-mail do remetente
     to: email,                         // E-mail do destinatário (o e-mail fornecido pelo usuário)
     subject: 'Redefinição de Senha',
-    text: `Clique no link abaixo para redefinir sua senha:\n\nhttp://localhost:3001/auth/reset-password?token=${resetToken}`
+    text: `Clique no link abaixo para redefinir sua senha:\n\nhttp://localhost:3000/auth/reset-password?token=${resetToken}`
   };
 
   try {

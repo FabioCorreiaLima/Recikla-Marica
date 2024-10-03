@@ -1,4 +1,3 @@
-// pages/collection/request.tsx
 import { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importa o Bootstrap
@@ -8,6 +7,7 @@ const RequestCollectionPage = () => {
   const [quantity, setQuantity] = useState('');
   const [date, setDate] = useState('');
   const [address, setAddress] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // Estado para mensagem de sucesso
 
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,12 +19,28 @@ const RequestCollectionPage = () => {
       address,
     };
 
+    // Recupera o token do localStorage
+    const token = localStorage.getItem('token'); 
+
+    if (!token) {
+      alert('Token não encontrado. Faça login novamente.');
+      return;
+    }
+
     try {
-      const response = await axios.post('/api/collection', requestData);
-      if (response.status === 200) {
-        alert('Coleta solicitada com sucesso!');
-      } else {
-        alert('Falha ao solicitar coleta.');
+      const response = await axios.post('http://localhost:3001/api/coletas', requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response) {
+        setSuccessMessage('Coleta solicitada com sucesso!'); 
+        setMaterial('');
+        setQuantity('');
+        setDate('');
+        setAddress('');
       }
     } catch (error) {
       alert('Erro na solicitação: ' + error);
@@ -88,6 +104,7 @@ const RequestCollectionPage = () => {
               Solicitar Coleta
             </button>
           </form>
+          {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>} {/* Mensagem de sucesso */}
         </div>
       </div>
     </div>

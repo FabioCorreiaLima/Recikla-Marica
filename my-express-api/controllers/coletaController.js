@@ -3,7 +3,8 @@ const Coleta = require('../models/Coleta');
 
 exports.createColeta = async (req, res) => {
   const { material, quantity, date, address } = req.body;
-
+  const userId = req.user.id;
+  // console.log(userId);
   try {
     const coleta = await Coleta.create({
       material,

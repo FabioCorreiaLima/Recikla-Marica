@@ -1,7 +1,7 @@
 // pages/collection/list.tsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importa o Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
@@ -9,8 +9,19 @@ const CollectionListPage = () => {
   useEffect(() => {
     // Faz a requisição para buscar as coletas
     const fetchCollections = async () => {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        alert('Token não encontrado. Faça login novamente.');
+        return;
+      }
+
       try {
-        const response = await axios.get('/api/collections');
+        const response = await axios.get('http://localhost:3001/api/coletas', {
+          headers: {
+            'Authorization': `Bearer ${token}` // Inclui o token no cabeçalho da requisição
+          }
+        });
         setCollections(response.data);
       } catch (error) {
         alert('Erro ao carregar lista de coletas: ' + error);
@@ -20,19 +31,51 @@ const CollectionListPage = () => {
     fetchCollections();
   }, []);
 
+  // Função para formatar a data
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
+  // Função para formatar a quantidade com separador de milhar
+  const formatQuantity = (quantity: number) => {
+    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 0 }).format(quantity);
+  };
+
   return (
     <div className="container mt-5">
       <h1>Lista de Coletas</h1>
-      <ul className="list-group">
-        {collections.map((collection, index) => (
-          <li key={index} className="list-group-item">
-            <strong>Material:</strong> {collection.material} <br />
-            <strong>Quantidade:</strong> {collection.quantity} <br />
-            <strong>Data:</strong> {collection.date} <br />
-            <strong>Endereço:</strong> {collection.address}
-          </li>
-        ))}
-      </ul>
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Material</th>
+            <th>Quantidade</th>
+            <th>Data</th>
+            <th>Endereço</th>
+          </tr>
+        </thead>
+        <tbody>
+          {collections.map((collection, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{collection.material}</td>
+              <td>{formatQuantity(collection.quantity)}</td>
+              <td>{formatDate(collection.date)}</td>
+              <td>{collection.address}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <a style={{ marginBottom: '50px' }} href="/dashboard" className="btn btn-secondary mt-3">
+        Voltar ao Dashboard
+      </a>
     </div>
   );
 };
