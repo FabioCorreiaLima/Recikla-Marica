@@ -3,6 +3,8 @@ const cors = require('cors'); // Importando CORS
 const sequelize = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const coletasRoutes = require('./routes/coletaRoutes');
+const path = require('path');
+
 const app = express();
 
 // Middleware para CORS (permitir requests de diferentes origens)
@@ -11,6 +13,7 @@ app.use(cors()); // Permite todas as origens por padrão
 // Middleware para parsing de JSON
 app.use(express.json());
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Roteamento
 app.use('/auth', authRoutes);
 app.use('/api', coletasRoutes);

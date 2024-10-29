@@ -14,20 +14,20 @@ const Coleta = sequelize.define('Coleta', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  quantity: {
+  quantidade: {  // Renomeado para manter consistência em português
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  date: {
+  data: {  // Renomeado para manter consistência em português
     type: DataTypes.DATE,
     allowNull: false,
   },
-  address: {
+  endereco: {  // Renomeado para manter consistência em português
     type: DataTypes.STRING,
     allowNull: false,
   },
   status: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM('aguardando', 'em_andamento', 'concluida'),  // Usando ENUM para status fixos
     defaultValue: 'aguardando',
   },
   userId: { // Coluna para a referência ao User
@@ -37,10 +37,26 @@ const Coleta = sequelize.define('Coleta', {
       model: User, // Modelo referenciado
       key: 'id',   // Chave referenciada
     },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   },
+  coletorId: { // ID do coletor que aceitou a coleta
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: User, // Supondo que o coletor também seja um usuário
+      key: 'id',
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  },
+}, {
+  timestamps: true,
 });
 
-// Associação: Coleta pertence a um User
+// Associação: Coleta pertence a um User (solicitante)
 Coleta.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+// Associação opcional: Coletor pode ser um User
+Coleta.belongsTo(User, { as: 'coletor', foreignKey: 'coletorId' });
 
 module.exports = Coleta;

@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
-import { getProfile, updateProfile } from '../api/services/api'; // Importa as funções para obter e atualizar perfil
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importa o Bootstrap
+import { getProfile, updateProfile } from '../api/services/api';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const EditProfilePage = () => {
   const [username, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentImage, setCurrentImage] = useState<string | null>(null);
-
+  const [file, setFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await getProfile(); // Usa a função para obter perfil
+        const response = await getProfile();
         setName(response.data.username);
         setEmail(response.data.email);
-        setCurrentImage(response.data.profileImage); // Assume que o backend retorna a URL da imagem de perfil
+        setCurrentImage(response.data.profileImage ? response.data.profileImage.url : null); // Verifica se há uma URL na imagem
       } catch (error) {
         alert('Erro ao carregar perfil: ' + (error as Error).message);
       }
@@ -23,23 +25,38 @@ const EditProfilePage = () => {
     fetchProfile();
   }, []);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('email', email);
-    if (password) {
-      formData.append('password', password);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    setFile(selectedFile);
+    console.log(setFile)
+
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setPreviewImage(null);
     }
-  
-    // // Verifique os valores do FormData
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(`${key}: ${value}`);
-    // }
-  
+  };
+
+    const handleSave = async (e: React.FormEvent) => {
+      e.preventDefault();
+    
+      const formData = new FormData();
+      console.log(formData)
+      formData.append('username', username);
+      formData.append('email', email);
+      if (password) {
+        formData.append('password', password);
+      }
+      if (file) {
+        formData.append('profileImage', file.name); // Adiciona o arquivo da nova imagem ao FormData
+      }
+
     try {
-      const response = await updateProfile(formData); // Usa a função para atualizar perfil
+      const response = await updateProfile(formData);
       if (response.status === 200) {
         alert('Perfil atualizado com sucesso!');
       } else {
@@ -49,13 +66,36 @@ const EditProfilePage = () => {
       alert('Erro ao salvar alterações: ' + (error as Error).message);
     }
   };
-  
 
   return (
     <div className="container">
       <div className="row justify-content-md-center">
         <div className="col-md-6">
           <h1 className="text-center">Editar Perfil</h1>
+          <div className="text-center mb-3 d-flex justify-content-center">
+            {previewImage ? (
+              <img
+                src={previewImage}
+                alt="Nova Foto de perfil"
+                className="img-fluid rounded-circle"
+                style={{ width: '300px', height: '300px' }}
+              />
+            ) : currentImage ? (
+              <img
+                src={currentImage}
+                alt="Foto de perfil"
+                className="img-fluid rounded-circle"
+                style={{ width: '300px', height: '300px' }}
+              />
+            ) : (
+              <img
+                src="http://localhost:3001/uploads/padrao.png"
+                alt="Foto padrão"
+                className="img-fluid rounded-circle"
+                style={{ width: '300px', height: '300px' }}
+              />
+            )}
+          </div>
           <form onSubmit={handleSave} encType="multipart/form-data">
             <div className="form-group">
               <label htmlFor="formBasicName">Nome Completo</label>
@@ -90,6 +130,17 @@ const EditProfilePage = () => {
                 placeholder="Digite sua nova senha (deixe em branco para manter a atual)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="formFile" className="form-label">Selecionar Nova Imagem</label>
+              <input 
+                className="form-control" 
+                type="file" 
+                id="formFile" 
+                accept="image/*" 
+                onChange={handleFileChange} 
               />
             </div>
 
