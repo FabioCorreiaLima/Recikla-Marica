@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getProfile, updateProfile } from '../api/services/api';
+import { getProfile, updateProfile } from '../../api/services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const EditProfilePage = () => {

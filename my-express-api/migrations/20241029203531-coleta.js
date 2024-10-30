@@ -13,15 +13,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      quantidade: { // Renomeado para coincidir com o modelo
+      quantity: { // Renomeado para coincidir com o modelo
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      data: { // Renomeado para coincidir com o modelo
+      date: { // Renomeado para coincidir com o modelo
         type: Sequelize.DATE,
         allowNull: false,
       },
-      endereco: { // Renomeado para coincidir com o modelo
+      address: { // Renomeado para coincidir com o modelo
         type: Sequelize.STRING,
         allowNull: false,
       },

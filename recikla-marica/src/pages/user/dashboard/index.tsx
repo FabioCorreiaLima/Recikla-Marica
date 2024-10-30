@@ -7,19 +7,19 @@ const DashboardPage = () => {
       <h1>Bem-vindo, Usuário</h1>
       <div className="row">
         <div className="col">
-          <a href="/collection/request" className="btn btn-primary w-100 mb-3">
+          <a href="/user/collection/request" className="btn btn-primary w-100 mb-3">
             Solicitar Coleta
           </a>
         </div>
         <div className="col">
-          <a href="/collection/list" className="btn btn-success w-100 mb-3">
+          <a href="/user/collection/list" className="btn btn-success w-100 mb-3">
             Lista de Coletas
           </a>
         </div>
       </div>
       <div className="row">
         <div className="col">
-          <a href="/profile/edit" className="btn btn-warning w-100 mb-3">
+          <a href="/user/profile/edit" className="btn btn-warning w-100 mb-3">
             Editar Perfil
           </a>
         </div>

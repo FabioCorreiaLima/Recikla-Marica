@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Importa o Bootstrap
 import { useRouter } from 'next/router';
 import axios from 'axios';
 
-
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -16,14 +15,29 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:3001/auth/login', {
-            email, password
-          }, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
+                email, 
+                password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Armazena o token no localStorage
             localStorage.setItem('token', response.data.token);
-            router.push('../dashboard');
+
+            // Supondo que a resposta contenha o papel do usuário
+            const userRole = response.data.user.role; // Acessa o papel do usuário da resposta
+
+            // Redireciona baseado no papel do usuário
+            if (userRole === 'usuario') {
+                router.push('../user/dashboard'); // Redireciona para o dashboard do usuário
+            } else if (userRole === 'coletor') {
+                router.push('/coletor/dashboard'); // Redireciona para o dashboard do coletor
+            } else {
+                setError('Papel do usuário desconhecido.'); // Caso o papel não seja reconhecido
+            }
+
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             setError('Email ou senha incorretos!');

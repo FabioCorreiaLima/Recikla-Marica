@@ -14,15 +14,15 @@ const Coleta = sequelize.define('Coleta', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  quantidade: {  // Renomeado para manter consistência em português
+  quantity: {  // Renomeado para manter consistência em português
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  data: {  // Renomeado para manter consistência em português
+  date: {  // Renomeado para manter consistência em português
     type: DataTypes.DATE,
     allowNull: false,
   },
-  endereco: {  // Renomeado para manter consistência em português
+  address: {  // Renomeado para manter consistência em português
     type: DataTypes.STRING,
     allowNull: false,
   },

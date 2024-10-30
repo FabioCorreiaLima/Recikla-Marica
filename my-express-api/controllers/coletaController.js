@@ -4,7 +4,6 @@ const Coleta = require('../models/Coleta');
 exports.createColeta = async (req, res) => {
   const { material, quantity, date, address } = req.body;
   const userId = req.user.id;
-  // console.log(userId);
   try {
     const coleta = await Coleta.create({
       material,
@@ -12,7 +11,9 @@ exports.createColeta = async (req, res) => {
       date,
       address,
       userId: req.user.id,
+
     });
+    console.log(coleta)
     res.status(201).json(coleta);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -21,9 +22,22 @@ exports.createColeta = async (req, res) => {
 
 
 exports.getColetas = async (req, res) => {
-  const coletas = await Coleta.findAll();
-  res.status(200).json(coletas);
+  try {
+    // Busca apenas as coletas que não foram aceitas (status "aguardando" ou coletorId null)
+    const coletas = await Coleta.findAll({
+      where: {
+        status: 'aguardando', 
+        coletorId: null      
+      }
+    });
+
+    res.status(200).json(coletas);
+  } catch (error) {
+    console.error('Erro ao buscar coletas:', error);
+    res.status(500).json({ error: 'Erro ao buscar coletas pendentes.' });
+  }
 };
+
 
 exports.updateColeta = async (req, res) => {
   const { id } = req.params;
@@ -64,11 +78,11 @@ exports.acceptColeta = async (req, res) => {
     const coleta = await Coleta.findByPk(id);
     if (!coleta) return res.status(404).json({ error: 'Coleta não encontrada' });
 
-    if (coleta.status !== 'pendente') {
+    if (coleta.status !== 'aguardando') {
       return res.status(400).json({ error: 'Coleta já foi aceita' });
     }
 
-    coleta.status = 'em retirada';
+    coleta.status = 'em_andamento';
     coleta.coletorId = coletorId;  // Atribui o coletor à coleta
     await coleta.save();
 
