@@ -54,10 +54,15 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id; // ID do usuário autenticado
-    const updatedUser = await authService.updateUserProfile(userId, req.body); // Chama o serviço para atualizar o perfil
-    res.status(200).json(updatedUser); // Retorna o usuário atualizado
+    const updatedData = req.body;
+
+    updatedData.profileImage = `/uploads/${updatedData.profileImage}`;  // Caminho da imagem salva
+
+    const updatedUser = await authService.updateUserProfile(userId, updatedData);
+    res.status(200).json(updatedUser); 
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
