@@ -29,6 +29,10 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('usuario', 'coletor'), // Define os papéis possíveis
     allowNull: false, // Deve ser obrigatória
   },
+  profileImage: {
+    type: DataTypes.STRING,  // Caminho para o arquivo de imagem
+    allowNull: true
+  },
   isAdm: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
