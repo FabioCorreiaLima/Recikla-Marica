@@ -1,10 +1,12 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importa o Bootstrap
 import { useRouter } from 'next/router';
 import axios from 'axios';
-
+import { FaGoogle, FaGithub } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -12,18 +14,47 @@ const LoginPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
+    useEffect(() => {
+        const { success, error } = router.query;
+
+        if (success === 'true') {
+            alert("Login com Google realizado com sucesso!");
+            router.replace('/user/dashboard'); // Redireciona para o dashboard após 2 segundos;
+        }
+
+        if (error === 'auth_failed') {
+            alert("Falha na autenticação com o Google.");
+            router.replace('/auth/login'); // Redireciona para a página de login após 3 segundos;
+        }
+    }, [router.query]);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:3001/auth/login', {
-            email, password
-          }, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
+                email,
+                password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Armazena o token no localStorage
             localStorage.setItem('token', response.data.token);
-            router.push('../dashboard');
+
+            // Supondo que a resposta contenha o papel do usuário
+            const userRole = response.data.user.role; // Acessa o papel do usuário da resposta
+
+            // Redireciona baseado no papel do usuário
+            if (userRole === 'usuario') {
+                router.push('../user/dashboard'); // Redireciona para o dashboard do usuário
+            } else if (userRole === 'coletor') {
+                router.push('/coletor/dashboard'); // Redireciona para o dashboard do coletor
+            } else {
+                setError('Papel do usuário desconhecido.'); // Caso o papel não seja reconhecido
+            }
+
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             setError('Email ou senha incorretos!');
@@ -81,6 +112,29 @@ const LoginPage: React.FC = () => {
                             <Link href="/auth/register" className="btn btn-primary">
                                 Cadastre-se
                             </Link>
+
+                            {/***********/}
+                            {/* LOGIN VIA GMAIL || GITHUB */}
+                            {/***********/}
+                            <div className="d-flex justify-content-center gap-3 mt-3">
+                                <button
+                                    className="btn btn-outline-dark d-flex align-items-center justify-content-center"
+                                    style={{ color: "#DB4437" }} // Cor do Google
+                                    onClick={() => window.location.href = 'http://localhost:3001/auth/google'} // Redireciona diretamente para o backend
+                                >
+                                    <FaGoogle size={24} />
+                                </button>
+
+
+                                <button
+                                    className="btn btn-outline-dark"
+                                    style={{ color: "#333" }} // Cor do GitHub
+                                    onClick={() => window.location.href = '/auth/github'}
+                                >
+                                    <FaGithub size={24} />
+                                </button>
+                            </div>
+
                             <Link href="/auth/forgot-password" className="btn btn-link">
                                 Esqueci minha senha
                             </Link>

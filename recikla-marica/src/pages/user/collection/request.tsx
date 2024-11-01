@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Importa o Bootstrap
 const RequestCollectionPage = () => {
   const [material, setMaterial] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [unit, setUnit] = useState(''); // Unidade de medida selecionada
   const [date, setDate] = useState('');
   const [address, setAddress] = useState('');
   const [successMessage, setSuccessMessage] = useState(''); // Estado para mensagem de sucesso
@@ -12,14 +13,18 @@ const RequestCollectionPage = () => {
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!unit) {
+      alert('Por favor, selecione uma unidade.');
+      return;
+    }
+
     const requestData = {
       material,
-      quantity,
+      quantity: `${quantity} ${unit}`, // Inclui a unidade de medida
       date,
       address,
     };
 
-    // Recupera o token do localStorage
     const token = localStorage.getItem('token'); 
 
     if (!token) {
@@ -39,6 +44,7 @@ const RequestCollectionPage = () => {
         setSuccessMessage('Coleta solicitada com sucesso!'); 
         setMaterial('');
         setQuantity('');
+        setUnit(''); // Redefine a unidade para o valor padrão
         setDate('');
         setAddress('');
       }
@@ -67,14 +73,27 @@ const RequestCollectionPage = () => {
 
             <div className="form-group">
               <label htmlFor="formQuantity">Quantidade</label>
-              <input
-                type="text"
-                className="form-control"
-                id="formQuantity"
-                placeholder="Digite a quantidade"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-              />
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  id="formQuantity"
+                  placeholder="Digite a quantidade"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+                <select
+                  className="form-select"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>Selecione</option>
+                  <option value="L">L</option>
+                  <option value="kg">kg</option>
+                  <option value="unid">unid</option>
+                </select>
+              </div>
             </div>
 
             <div className="form-group">
@@ -105,6 +124,9 @@ const RequestCollectionPage = () => {
             </button>
           </form>
           {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>} {/* Mensagem de sucesso */}
+          <a style={{ marginBottom: '50px' }} href="/user/dashboard" className="btn btn-secondary mt-3">
+            Voltar ao Dashboard
+          </a>
         </div>
       </div>
     </div>

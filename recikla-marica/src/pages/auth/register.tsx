@@ -27,7 +27,7 @@ const RegisterPage: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, email, password, role }), // Enviando o campo role
+                body: JSON.stringify({ username, email, password, role }), 
                 
             });
 

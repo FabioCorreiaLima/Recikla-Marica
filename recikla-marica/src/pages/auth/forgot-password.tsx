@@ -22,10 +22,10 @@ const ForgotPasswordPage: React.FC = () => {
                 'Content-Type': 'application/json'
               }
             });
-            setMessage('Password reset link sent to your email.');
+            setMessage('Link para redefinição de senha enviado para o seu e-mail.');
           } catch (err) {
 
-            setError('Error sending reset link.');
+            setError('Erro ao enviar o link de redefinição.');
           }
     };
 
