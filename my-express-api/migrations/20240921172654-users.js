@@ -27,6 +27,10 @@ module.exports = {
         type: DataTypes.ENUM('usuario', 'coletor'),
         allowNull: false,
       },
+      profileImage: {
+        type: Sequelize.STRING,  // Novo campo para o caminho da imagem do perfil
+        allowNull: true
+      },
       isAdm: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
